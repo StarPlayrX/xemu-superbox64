@@ -127,10 +127,16 @@ void xemu_input_init(void)
         SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     }
 
+    // don't know if this should be before SDL_Init
+    SDL_GameControllerAddMappingsFromFile(g_config.input.gamecontrollerdb_path);
+
     if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
-        fprintf(stderr, "Failed to initialize SDL gamecontroller subsystem: %s\n", SDL_GetError());
-        exit(1);
+        fprintf(stderr, "Cannot to initialize SDL gamecontroller subsystem: %s\n", SDL_GetError());
+        //exit(1);
     }
+
+    // or after
+    SDL_GameControllerAddMappingsFromFile(g_config.input.gamecontrollerdb_path);
 
     // Create the keyboard input (always first)
     ControllerState *new_con = malloc(sizeof(ControllerState));
@@ -425,8 +431,8 @@ void xemu_input_update_sdl_controller_state(ControllerState *state)
         SDL_CONTROLLER_BUTTON_DPAD_UP,
         SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
         SDL_CONTROLLER_BUTTON_DPAD_DOWN,
-        SDL_CONTROLLER_BUTTON_BACK,
         SDL_CONTROLLER_BUTTON_START,
+        SDL_CONTROLLER_BUTTON_BACK,
         SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
         SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
         SDL_CONTROLLER_BUTTON_LEFTSTICK,
